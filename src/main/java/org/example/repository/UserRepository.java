@@ -1,11 +1,8 @@
 package org.example.repository;
 
-import com.sun.source.tree.TryTree;
 import org.example.config.DatabaseConnection;
 import org.example.entity.User;
 
-import java.beans.Statement;
-import java.lang.ref.PhantomReference;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

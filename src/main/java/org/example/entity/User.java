@@ -28,7 +28,7 @@ public class User {
     public String toString() {
         return
                         "UserName :" + userName + "\t" +
-                        "Password :" + password + "\t" +
+                        "Password :" + "****" + "\t" +
                         "Email :" + email + "\t" +
                         "Bio :" + bio + "\t" +
                         "DisplayName :" + displayName;
