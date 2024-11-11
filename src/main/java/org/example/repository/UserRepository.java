@@ -120,12 +120,14 @@ public class UserRepository {
             statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
+                Long id = rs.getLong("ID");
                 String name = rs.getString("USERNAME");
                 String pass = rs.getString("PASSWORD");
                 String email = rs.getString("EMAIL");
                 String bio = rs.getString("BIO");
                 String displayName = rs.getString("DISPLAY_NAME");
                 User user = new User(name, pass, email, bio, displayName);
+                user.setId(id);
                 return user;
             }
         } catch (SQLException e) {
@@ -181,10 +183,49 @@ public class UserRepository {
                 String bio = rs.getString("BIO");
                 String displayName = rs.getString("DISPLAY_NAME");
                 User user = new User(name, pass, email, bio, displayName);
+
                 return user;
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static String GET_USER_ID_WITH_EMAIL = """
+            SELECT ID FROM USER_ACCOUNT
+            WHERE EMAIL=?
+            """;
+    public Long getUserId(String email) {
+        Connection con = DatabaseConnection.getConnection();
+        try{
+            PreparedStatement statement=con.prepareStatement(GET_USER_ID_WITH_EMAIL);
+            statement.setString(1, email);
+            ResultSet rs=statement.executeQuery();
+            while (rs.next()) {
+                Long id = rs.getLong("ID");
+                return id;
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private static String GET_DISPLAYNAME= """
+            SELECT DISPLAY_NAME FROM USER_ACCOUNT WHERE ID=?
+            """;
+    public String getInfo(Long id){
+        Connection con = DatabaseConnection.getConnection();
+        try {
+            PreparedStatement statement=con.prepareStatement(GET_DISPLAYNAME);
+            statement.setLong(1, id);
+            ResultSet rs=statement.executeQuery();
+            while (rs.next()) {
+                String displayName = rs.getString("DISPLAY_NAME");
+                return displayName;
+            }
+        }catch (SQLException e){
             e.printStackTrace();
         }
         return null;

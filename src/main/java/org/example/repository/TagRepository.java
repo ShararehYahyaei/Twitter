@@ -62,9 +62,8 @@ public class TagRepository {
             ResultSet set = statement.executeQuery();
             while (set.next()) {
                 String name = set.getString("NAME");
-                Long id=set.getLong("ID");
-                tags.add(new Tag(name,id));
-
+                Long id = set.getLong("ID");
+                tags.add(new Tag(name, id));
             }
             set.close();
             return tags;
@@ -74,4 +73,27 @@ public class TagRepository {
         }
         return null;
     }
+
+    private static String GET_ALL_TAGS_FOR_ONE_USER = """
+            SELECT NAME FROM TAG
+            WHERE ID =?
+            """;
+
+    public String getNameForTag(Long Id) {
+        Connection connection = DatabaseConnection.getConnection();
+        try {
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_TAGS_FOR_ONE_USER);
+            statement.setLong(1, Id);
+            ResultSet set = statement.executeQuery();
+            while (set.next()) {
+                String name = set.getString("NAME");
+                return name;
+            }
+            set.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

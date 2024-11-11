@@ -15,7 +15,7 @@ public class User {
     private String displayName;
     private LocalDateTime createAt;
 
-    public User(String userName, String password, String email, String bio, String displayName) {
+    public User( String userName, String password, String email, String bio, String displayName) {
         this.userName = userName;
         this.password = password;
         this.email = email;

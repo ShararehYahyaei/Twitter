@@ -12,5 +12,13 @@ public class Tag {
         this.id = id;
     }
 
+    public Tag() {
+    }
 
+    @Override
+    public String toString() {
+        return
+                "name='" + name + '\'';
+
+    }
 }

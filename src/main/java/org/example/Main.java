@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.entity.Tag;
+import org.example.entity.Tweet;
 import org.example.entity.User;
 import org.example.service.JunctionService;
 import org.example.service.TagService;
@@ -19,33 +20,38 @@ public class Main {
     static TagService tagService = new TagService();
     static TweetService tweetService = new TweetService();
     static JunctionService junction = new JunctionService();
+    static User currentUser = null;
 
     public static void main(String[] args) {
 
-        String res = menu();
-        switch (res) {
-            case "1":
-                signUp();
-                break;
-            case "2":
-                signIn();
-                break;
-            case "3":
-                System.exit(0);
-                break;
-            case "5":
-                System.out.println("Wrong Number");
-                break;
+        while (true) {
+            String res = menu();
+            switch (res) {
+                case "1":
+                    signUp();
+                    break;
+                case "2":
+                    login();
+                    break;
+                case "3":
+                    System.exit(0);
+                    break;
+                case "5":
+                    System.out.println("Wrong Number");
+                    break;
+            }
+
         }
-
-
     }
 
+    private static void logOut() {
+        currentUser = null;
+    }
 
     public static String menu() {
         System.out.println("Welcome To twitter");
         System.out.println("1 - Sign up ");
-        System.out.println("2 - Sign in  ");
+        System.out.println("2 - Login ");
         System.out.println("3 - Exit");
         System.out.println("Please enter your request : ");
         String result = scanner.nextLine();
@@ -70,21 +76,24 @@ public class Main {
             System.out.println("sign up successful");
         } else {
             System.out.println("you have already registered");
+            menu();
         }
         System.out.println(" 1 - Login ");
         System.out.println(" 2 - Exit ");
         System.out.println("Enter your request : ");
         String result = scanner.nextLine();
         if (result.equals("1")) {
-            signIn();
-
-        } else {
-            System.exit(0);
+            login();
         }
+        if (result.equals("2")) {
+            System.exit(0);
+        } else {
+            System.out.println("Wrong Number");
 
+        }
     }
 
-    private static void signIn() {
+    private static void login() {
         System.out.println("Please enter Your Email / UserName :");
         String userName = scanner.nextLine();
         System.out.println("Please enter Your Password :");
@@ -92,42 +101,50 @@ public class Main {
         User user = userService.login(userName, password);
         if (user != null) {
             System.out.println("login successful");
+            currentUser = user;
             userMenu();
         } else {
             System.out.println("login failed");
-            System.out.println(" 1 - Sign in ");
-            System.out.println(" 2 - Exit ");
-            System.out.println("Enter your request : ");
-            String result = scanner.nextLine();
-            if (result.equals("1")) {
-                signIn();
-
-            } else {
-                System.exit(0);
-            }
         }
 
     }
 
     public static void userMenu() {
         System.out.println(" 1 - New  Post ");
-        System.out.println(" 2 - View Post ");
-        System.out.println(" 3 - Edit Your Profile ");
-        System.out.println(" 4 - Exit ");
+        System.out.println(" 2 - View Your Posts ");
+        System.out.println(" 3 - Edit your profile ");
+        System.out.println(" 4 - View all  posts ");
+        System.out.println(" 5 - like or dislike ");
+        System.out.println(" 6 - Retweet ");
+        System.out.println(" 7 - Log Out ");
         String res = scanner.nextLine();
         switch (res) {
             case "1":
                 createNewPost();
-
-
                 break;
             case "2":
-                //todo view posts
+                System.out.println("your Tweet :");
+                List<Tweet> tweets = userService.getTweetUser(currentUser.getEmail());
+                for (int i = 0; i < tweets.size(); i++) {
+                    System.out.println("Tweet Id :" + tweets.get(i).getId() + "\t" + " And Content :" + "\t" + tweets.get(i).getContent());
+                }
+                if (tweets.isEmpty()) {
+                    System.out.println("you have not post anything yet");
+                } else {
+                    System.out.println(" 1- edit   your post ");
+                    System.out.println(" 2- delete your post ");
+                    String result = scanner.nextLine();
+                    if (result.equals("1")) {
+                        editTweet(tweets);
+                    }
+                    if (result.equals("2")) {
+                        deleteYourTweet(currentUser.getEmail());
+                    }
+                }
+
                 break;
             case "3":
-                System.out.println("Please enter your email");
-                String email = scanner.nextLine();
-                User user = menuForUpdate(email);
+                User user = menuForUpdate(currentUser.getEmail());
                 User userN = updateUser(user);
                 if (userN != null) {
                     System.out.println("Your Data is updated");
@@ -136,9 +153,18 @@ public class Main {
                 }
                 break;
             case "4":
-                System.exit(0);
+                getTweetsForAll();
                 break;
 
+            case "5":
+                likeOrDislike();
+                break;
+            case "6":
+                retweet(currentUser);
+                break;
+            case "7":
+                logOut();
+                break;
         }
     }
 
@@ -220,10 +246,9 @@ public class Main {
             }
         }
 
-      List<Tag>chosenTags= chooseTags();
-
-
-
+        List<Tag> chosenTags = chooseTags();
+        tweetService.createNewTweet(post, chosenTags, currentUser);
+        System.out.println("Post created successfully");
     }
 
     private static List<Tag> chooseTags() {
@@ -251,6 +276,9 @@ public class Main {
         return tags;
     }
 
+    public static void getContentUser(String email) {
+
+    }
 
     public static String createContent() {
         System.out.println("Please enter your content  :");
@@ -284,4 +312,149 @@ public class Main {
         return null;
     }
 
+    public static void deleteYourTweet(String email) {
+        List<Tweet> tweets = userService.getTweetUser(email);
+        System.out.println("choose your id :");
+        Long id = scanner.nextLong();
+        for (int i = 0; i < tweets.size(); i++) {
+            if (tweets.get(i).getId() == id) {
+                tweetService.deleteTweet(id);
+                System.out.println("Tweet deleted successfully");
+                return;
+            } else {
+                System.out.println("Tweet not found");
+            }
+        }
+    }
+
+    public static void getTweetsForAll() {
+        List<Tweet> tweets = tweetService.getAllTweets();
+        for (int i = 0; i < tweets.size(); i++) {
+            if (tweets != null) {
+                String display = userService.getInfo(tweets.get(i).getUserId());
+                System.out.println("Id  " + tweets.get(i).getId() + " : " + " name : " + display + " *** " + "post : " + tweets.get(i).getContent());
+            }
+        }
+    }
+
+    public static void likeOrDislike() {
+        List<Tweet> tweets = tweetService.getAllTweets();
+        getTweetsForAll();
+        System.out.println("choose your id :");
+        Long id = scanner.nextLong();
+        for (int i = 0; i < tweets.size(); i++) {
+            if (tweets.get(i).getId() == id) {
+                System.out.println(" 1 - like");
+                System.out.println(" 2 - dislike");
+                System.out.println("enter your comment : ");
+                String comment = new Scanner(System.in).nextLine();
+                if (comment.equals("1")) {
+                    likeTweet(id);
+                } else if (comment.equals("2")) {
+                    dislike(id);
+                }
+            }
+        }
+
+    }
+
+    public static void likeTweet(Long tweetId) {
+        boolean res = tweetService.likeTweet(tweetId);
+        if (res) {
+            System.out.println("Tweet Liked Successfully");
+        }
+    }
+
+    public static void dislike(Long tweetId) {
+        boolean res = tweetService.dislikeTweet(tweetId);
+        if (res) {
+            System.out.println("dislike Successfully");
+        }
+    }
+
+    public static void retweet(User user) {
+        List<Tweet> tweets = tweetService.getAllTweets();
+        for (Tweet tweet : tweets) {
+            System.out.println("Id : " + tweet.getId() + "\nContent : " + tweet.getContent());
+        }
+        System.out.println("please enter your id :");
+        Long tweetId = scanner.nextLong();
+        for (int i = 0; i < tweets.size(); i++) {
+            if (tweets.get(i).getId() == tweetId) {
+                String content = tweets.get(i).getContent();
+                System.out.println(content);
+                System.out.println("please enter content should be 280 characters :");
+                String retweet = new Scanner(System.in).nextLine();
+                List<Tag> tags = junction.getTags(tweetId);
+                tweetService.createNewTweet(retweet, tags, user);
+                System.out.println("retweet successfully");
+            }
+        }
+
+    }
+
+    public static void editTweet(List<Tweet> tweets) {
+        for (int i = 0; i < tweets.size(); i++) {
+            System.out.println("Tweet Id :" +
+                    tweets.get(i).getId() + "\n" +
+                    "content : " + tweets.get(i).getContent());
+
+        }
+
+        System.out.println("please choose your tweet id :");
+        Long tweetId = new Scanner(System.in).nextLong();
+        Tweet tweet;
+        for (int i = 0; i < tweets.size(); i++) {
+            if (tweets.get(i).getId() == tweetId) {
+                tweet = tweets.get(i);
+                break;
+            }
+        }
+        System.out.println("please choose which one :");
+        System.out.println(" 1 - content ");
+        System.out.println(" 2 - Tag ");
+        String res = new Scanner(System.in).nextLine();
+        if (res.equals("1")) {
+            String newComment = createContent();
+            tweetService.updateContentByTweetId(newComment, tweetId);
+            System.out.println("Content updated successfully");
+        }
+        if (res.equals("2")) {
+            List<Tag> tags = junction.getTags(tweetId);
+            if (tags.isEmpty()) {
+                List<Tag> chosenTags = chooseTags();
+                saveListTags(chosenTags, tweetId);
+            } else {
+                System.out.println(" 1 - delete tag ");
+                System.out.println(" 2 - Add tag ");
+                String finalT = new Scanner(System.in).nextLine();
+                if (finalT.equals("1")) {
+                    for (int i = 0; i < tags.size(); i++) {
+                        String nameTag = tagService.getTagName(tags.get(i).getId());
+                        System.out.println("Id Tag : " +
+                                tags.get(i).getId() + "\n" +
+                                "Tag Name : " + nameTag);
+                    }
+                    System.out.println("Please enter your Tag Id : ");
+                    Long tagId = new Scanner(System.in).nextLong();
+                    junction.delete(tweetId, tagId);
+                    System.out.println("tag deleted successfully");
+
+                }
+                if (finalT.equals("2")) {
+                    List<Tag> chosenTags = chooseTags();
+                    saveListTags(chosenTags, tweetId);
+                }
+            }
+        }
+    }
+
+    private static void saveListTags(List<Tag> chosenTags, Long tweetId) {
+        for (int i = 0; i < chosenTags.size(); i++) {
+            junction.insert(tweetId, chosenTags.get(i).getId());
+        }
+        System.out.println("your tags successfully");
+    }
+
 }
+

@@ -1,12 +1,14 @@
 package org.example.service;
 
+import org.example.entity.Tweet;
 import org.example.entity.User;
 import org.example.repository.UserRepository;
 
-import java.sql.SQLException;
+import java.util.List;
 
 public class UserService {
     private final UserRepository userRepository = new UserRepository();
+    TweetService tweetService = new TweetService();
 
     public UserService() {
     }
@@ -43,9 +45,21 @@ public class UserService {
         User user = userRepository.getInformationForOneUser(email);
         return user;
     }
-    public User updateInformation(User user){
-        System.out.println("gggggg");
-       User newUser= userRepository.update(user);
-      return newUser;
+
+    public User updateInformation(User user) {
+        User newUser = userRepository.update(user);
+        return newUser;
     }
+
+    public List<Tweet> getTweetUser(String email) {
+        Long id = userRepository.getUserId(email);
+        List<Tweet> tweets = tweetService.getContent(id);
+        return tweets;
+    }
+
+    public String getInfo(Long userId) {
+        String displayName = userRepository.getInfo(userId);
+        return displayName;
+    }
+
 }
