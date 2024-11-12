@@ -109,8 +109,8 @@ public class UserRepository {
 
     private static String LOGIN_WITH_USERNAME_PASSWORD = """
             SELECT * FROM USER_ACCOUNT
-             WHERE USERNAME=? 
-      
+             WHERE USERNAME=?
+              or EMAIL =?
             """;
 
     public User login(String username) {
@@ -118,6 +118,7 @@ public class UserRepository {
         try {
             PreparedStatement statement = con.prepareStatement(LOGIN_WITH_USERNAME_PASSWORD);
             statement.setString(1, username);
+            statement.setString(2, username);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Long id = rs.getLong("ID");

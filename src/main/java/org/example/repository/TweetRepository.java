@@ -89,7 +89,7 @@ public class TweetRepository {
     }
 
     private static String DELETE_TWEET = """
-            DELETE FROM TWEET 
+            DELETE FROM TWEET
             WHERE ID = ?
             """;
 
@@ -181,7 +181,7 @@ public class TweetRepository {
         return false;
     }
 
-    private static String UOADTE_CONTENT_WITH_TWEETID = """
+    private static String UPADTE_CONTENT_WITH_TWEETID = """
             UPDATE TWEET SET CONTENT=?
             WHERE ID=?
              """;
@@ -189,7 +189,7 @@ public class TweetRepository {
     public  void updateContentByTweetId(String comment, Long tweetId) {
         Connection connection = DatabaseConnection.getConnection();
         try {
-            PreparedStatement statement = connection.prepareStatement(UOADTE_CONTENT_WITH_TWEETID);
+            PreparedStatement statement = connection.prepareStatement(UPADTE_CONTENT_WITH_TWEETID);
             statement.setString(1, comment);
             statement.setLong(2, tweetId);
             statement.execute();

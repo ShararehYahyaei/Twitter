@@ -19,8 +19,6 @@ public class TweetService {
             Long tagId = tag.getId();
             junctionService.insert(id, tagId);
         }
-
-
     }
 
     public List<Tweet> getContent(Long id) {

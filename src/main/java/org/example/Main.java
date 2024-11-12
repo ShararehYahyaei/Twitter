@@ -117,6 +117,7 @@ public class Main {
             System.out.println(" 5 - like or dislike ");
             System.out.println(" 6 - Retweet ");
             System.out.println(" 7 - Log Out ");
+            System.out.println("please enter yor request : ");
             String res = new Scanner(System.in).nextLine();
             switch (res) {
                 case "1":
@@ -274,10 +275,6 @@ public class Main {
 
         }
         return tags;
-    }
-
-    public static void getContentUser(String email) {
-
     }
 
     public static String createContent() {
