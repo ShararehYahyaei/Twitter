@@ -3,6 +3,7 @@ package org.example.service;
 import org.example.entity.Tweet;
 import org.example.entity.User;
 import org.example.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.List;
 
@@ -17,13 +18,16 @@ public class UserService {
         String hashedPassword = hashPassword(password);
         User user = new User(userName, hashedPassword, email, bio, displayName);
         userRepository.save(user);
-
-
     }
 
-    private String hashPassword(String password) {
-        return password;
-        //todo generate the hashcode
+    public String hashPassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.encode(password);
+    }
+
+    private boolean checkPassword(String password, String hashedPassword) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.matches(password, hashedPassword);
     }
 
     public boolean checkExistedUser(String userName) {
@@ -37,8 +41,13 @@ public class UserService {
     }
 
     public User login(String userName, String password) {
-        User user = userRepository.login(userName, password);
-        return user;
+        User user = userRepository.login(userName);
+        String pasHash = user.getPassword();
+        Boolean result = checkPassword(password, pasHash);
+        if (result) {
+            return user;
+        }
+        return null;
     }
 
     public User getInformationForOneUser(String email) {

@@ -14,7 +14,7 @@ public class UserRepository {
             CREATE TABLE IF NOT EXISTS USER_ACCOUNT(
             ID SERIAL PRIMARY KEY NOT NULL ,
             USERNAME VARCHAR(50) NOT NULL UNIQUE,
-            PASSWORD VARCHAR(50) NOT NULL ,
+            PASSWORD VARCHAR(70) NOT NULL ,
             EMAIL VARCHAR(50) NOT NULL UNIQUE,
             BIO VARCHAR(50) NOT NULL ,
             DISPLAY_NAME VARCHAR(50) NOT NULL ,
@@ -109,15 +109,15 @@ public class UserRepository {
 
     private static String LOGIN_WITH_USERNAME_PASSWORD = """
             SELECT * FROM USER_ACCOUNT
-             WHERE USERNAME=? AND PASSWORD=?
+             WHERE USERNAME=? 
+      
             """;
 
-    public User login(String username, String password) {
+    public User login(String username) {
         Connection con = DatabaseConnection.getConnection();
         try {
             PreparedStatement statement = con.prepareStatement(LOGIN_WITH_USERNAME_PASSWORD);
             statement.setString(1, username);
-            statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Long id = rs.getLong("ID");

@@ -54,7 +54,7 @@ public class Main {
         System.out.println("2 - Login ");
         System.out.println("3 - Exit");
         System.out.println("Please enter your request : ");
-        String result = scanner.nextLine();
+        String result = new Scanner(System.in).nextLine();
         return result;
 
     }
@@ -84,8 +84,7 @@ public class Main {
         String result = scanner.nextLine();
         if (result.equals("1")) {
             login();
-        }
-        if (result.equals("2")) {
+        } else if (result.equals("2")) {
             System.exit(0);
         } else {
             System.out.println("Wrong Number");
@@ -110,61 +109,62 @@ public class Main {
     }
 
     public static void userMenu() {
-        System.out.println(" 1 - New  Post ");
-        System.out.println(" 2 - View Your Posts ");
-        System.out.println(" 3 - Edit your profile ");
-        System.out.println(" 4 - View all  posts ");
-        System.out.println(" 5 - like or dislike ");
-        System.out.println(" 6 - Retweet ");
-        System.out.println(" 7 - Log Out ");
-        String res = scanner.nextLine();
-        switch (res) {
-            case "1":
-                createNewPost();
-                break;
-            case "2":
-                System.out.println("your Tweet :");
-                List<Tweet> tweets = userService.getTweetUser(currentUser.getEmail());
-                for (int i = 0; i < tweets.size(); i++) {
-                    System.out.println("Tweet Id :" + tweets.get(i).getId() + "\t" + " And Content :" + "\t" + tweets.get(i).getContent());
-                }
-                if (tweets.isEmpty()) {
-                    System.out.println("you have not post anything yet");
-                } else {
-                    System.out.println(" 1- edit   your post ");
-                    System.out.println(" 2- delete your post ");
-                    String result = scanner.nextLine();
-                    if (result.equals("1")) {
-                        editTweet(tweets);
+        while (true) {
+            System.out.println(" 1 - New  Post ");
+            System.out.println(" 2 - View Your Posts ");
+            System.out.println(" 3 - Edit your profile ");
+            System.out.println(" 4 - View all  posts ");
+            System.out.println(" 5 - like or dislike ");
+            System.out.println(" 6 - Retweet ");
+            System.out.println(" 7 - Log Out ");
+            String res = new Scanner(System.in).nextLine();
+            switch (res) {
+                case "1":
+                    createNewPost();
+                    break;
+                case "2":
+                    System.out.println("your Tweet :");
+                    List<Tweet> tweets = userService.getTweetUser(currentUser.getEmail());
+                    for (int i = 0; i < tweets.size(); i++) {
+                        System.out.println("Tweet Id :" + tweets.get(i).getId() + "\t" + " And Content :" + "\t" + tweets.get(i).getContent());
                     }
-                    if (result.equals("2")) {
-                        deleteYourTweet(currentUser.getEmail());
+                    if (tweets.isEmpty()) {
+                        System.out.println("you have not post anything yet");
+                    } else {
+                        System.out.println(" 1- edit   your post ");
+                        System.out.println(" 2- delete your post ");
+                        String result = scanner.nextLine();
+                        if (result.equals("1")) {
+                            editTweet(tweets);
+                        }
+                        if (result.equals("2")) {
+                            deleteYourTweet(currentUser.getEmail());
+                        }
                     }
-                }
 
-                break;
-            case "3":
-                User user = menuForUpdate(currentUser.getEmail());
-                User userN = updateUser(user);
-                if (userN != null) {
-                    System.out.println("Your Data is updated");
-                } else {
-                    System.out.println("Your Data is not updated");
-                }
-                break;
-            case "4":
-                getTweetsForAll();
-                break;
-
-            case "5":
-                likeOrDislike();
-                break;
-            case "6":
-                retweet(currentUser);
-                break;
-            case "7":
-                logOut();
-                break;
+                    break;
+                case "3":
+                    User user = menuForUpdate(currentUser.getEmail());
+                    User userN = updateUser(user);
+                    if (userN != null) {
+                        System.out.println("Your Data is updated");
+                    } else {
+                        System.out.println("Your Data is not updated");
+                    }
+                    break;
+                case "4":
+                    getTweetsForAll();
+                    break;
+                case "5":
+                    likeOrDislike();
+                    break;
+                case "6":
+                    retweet(currentUser);
+                    break;
+                case "7":
+                    logOut();
+                    return;
+            }
         }
     }
 
@@ -353,6 +353,7 @@ public class Main {
                 } else if (comment.equals("2")) {
                     dislike(id);
                 }
+                break;
             }
         }
 
@@ -385,8 +386,9 @@ public class Main {
                 System.out.println(content);
                 System.out.println("please enter content should be 280 characters :");
                 String retweet = new Scanner(System.in).nextLine();
+                String newR=retweet + " "+ content;
                 List<Tag> tags = junction.getTags(tweetId);
-                tweetService.createNewTweet(retweet, tags, user);
+                tweetService.createNewTweet(newR , tags, user);
                 System.out.println("retweet successfully");
             }
         }
