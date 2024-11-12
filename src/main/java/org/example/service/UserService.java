@@ -1,10 +1,8 @@
 package org.example.service;
-
 import org.example.entity.Tweet;
 import org.example.entity.User;
 import org.example.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.util.List;
 
 public class UserService {

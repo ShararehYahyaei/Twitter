@@ -1,9 +1,7 @@
 package org.example.repository;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.example.config.DatabaseConnection;
 import org.example.entity.Tweet;
 import org.example.entity.User;

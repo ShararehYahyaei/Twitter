@@ -1,8 +1,6 @@
 package org.example.repository;
-
 import org.example.config.DatabaseConnection;
 import org.example.entity.User;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

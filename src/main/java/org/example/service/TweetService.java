@@ -1,11 +1,9 @@
 package org.example.service;
-
 import org.example.entity.Tag;
 import org.example.entity.Tweet;
 import org.example.entity.User;
-import org.example.repository.JunctionRepository;
 import org.example.repository.TweetRepository;
-import org.example.repository.UserRepository;
+
 
 import java.util.List;
 
