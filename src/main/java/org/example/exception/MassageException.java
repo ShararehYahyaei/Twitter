@@ -10,6 +10,7 @@ public class MassageException {
     public static final String tweetNotFound = "Tweet not found";
     public static final String loginFailed = "login failed";
     public static final String wrongId = "Wrong Id";
+    public static final String tweetsListIsEmpty = "TweetsListIsEmpty";
 
 
 }

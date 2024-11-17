@@ -13,6 +13,7 @@ public class DatabaseConnection {
     }
 
     static {
+
         String jdbc = "jdbc:postgresql://localhost:5432/twitter";
         try {
             connection = DriverManager.getConnection(jdbc, "postgres", "123456");
@@ -27,6 +28,7 @@ public class DatabaseConnection {
                     connection.close();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
+
                 }
             }
         });
