@@ -3,6 +3,8 @@ package org.example;
 import org.example.entity.Tag;
 import org.example.entity.Tweet;
 import org.example.entity.User;
+import org.example.exception.BusinessException;
+import org.example.exception.MassageException;
 import org.example.service.JunctionService;
 import org.example.service.TagService;
 import org.example.service.TweetService;
@@ -21,29 +23,29 @@ public class Main {
     static TweetService tweetService = new TweetService();
     static JunctionService junction = new JunctionService();
     static User currentUser = null;
-
     public static void main(String[] args) {
+        try {
+            while (true) {
+                String res = menu();
+                switch (res) {
+                    case "1":
+                        signUp();
+                        break;
+                    case "2":
+                        login();
+                        break;
+                    case "3":
+                        System.exit(0);
+                        break;
+                    default:
+                        throw new BusinessException(MassageException.wrongNumber);
+                }
 
-        while (true) {
-            String res = menu();
-            switch (res) {
-                case "1":
-                    signUp();
-                    break;
-                case "2":
-                    login();
-                    break;
-                case "3":
-                    System.exit(0);
-                    break;
-                case "5":
-                    System.out.println("Wrong Number");
-                    break;
             }
-
+        }catch (BusinessException e) {
+            System.out.println(e.getMessage());
         }
     }
-
     private static void logOut() {
         currentUser = null;
     }
@@ -75,8 +77,8 @@ public class Main {
             userService.signUp(userName, password, email, displayName, bio);
             System.out.println("sign up successful");
         } else {
-            System.out.println("you have already registered");
-            menu();
+            throw new BusinessException(MassageException.userExisted);
+
         }
         System.out.println(" 1 - Login ");
         System.out.println(" 2 - Exit ");
@@ -87,7 +89,7 @@ public class Main {
         } else if (result.equals("2")) {
             System.exit(0);
         } else {
-            System.out.println("Wrong Number");
+            throw new BusinessException(MassageException.wrongNumber);
 
         }
     }
@@ -103,7 +105,7 @@ public class Main {
             currentUser = user;
             userMenu();
         } else {
-            System.out.println("login failed");
+            throw new BusinessException(MassageException.loginFailed);
         }
 
     }
@@ -130,7 +132,7 @@ public class Main {
                         System.out.println("Tweet Id :" + tweets.get(i).getId() + "\t" + " And Content :" + "\t" + tweets.get(i).getContent());
                     }
                     if (tweets.isEmpty()) {
-                        System.out.println("you have not post anything yet");
+                        throw new BusinessException(MassageException.notPostYet);
                     } else {
                         System.out.println(" 1- edit   your post ");
                         System.out.println(" 2- delete your post ");
@@ -150,7 +152,7 @@ public class Main {
                     if (userN != null) {
                         System.out.println("Your Data is updated");
                     } else {
-                        System.out.println("Your Data is not updated");
+                        System.out.println(MassageException.dateIsNotUpdated);
                     }
                     break;
                 case "4":
@@ -206,8 +208,8 @@ public class Main {
             System.exit(0);
             return null;
         } else {
-            System.out.println("Wrong Number");
-            return null;
+            throw new BusinessException(MassageException.wrongNumber);
+
         }
 
     }
@@ -223,10 +225,9 @@ public class Main {
             System.out.println(user);
             return user;
         } else {
-            System.out.println("User not found");
-            menu();
+            throw new BusinessException(MassageException.userNotFound);
         }
-        return user;
+
     }
 
     public static void createNewTag() {
@@ -305,8 +306,8 @@ public class Main {
                 return tag;
             }
         }
-        System.out.println("Tag not found");
-        return null;
+        throw new BusinessException(MassageException.tagNotFound);
+
     }
 
     public static void deleteYourTweet(String email) {
@@ -319,7 +320,7 @@ public class Main {
                 System.out.println("Tweet deleted successfully");
                 return;
             } else {
-                System.out.println("Tweet not found");
+                throw new BusinessException(MassageException.tweetNotFound);
             }
         }
     }
@@ -349,8 +350,10 @@ public class Main {
                     likeTweet(id);
                 } else if (comment.equals("2")) {
                     dislike(id);
+                } else {
+                    throw new BusinessException(MassageException.wrongNumber);
                 }
-                break;
+
             }
         }
 
@@ -383,13 +386,12 @@ public class Main {
                 System.out.println(content);
                 System.out.println("please enter content should be 280 characters :");
                 String retweet = new Scanner(System.in).nextLine();
-                String newR=retweet + " "+ content;
+                String newR = retweet + " " + content;
                 List<Tag> tags = junction.getTags(tweetId);
-                tweetService.createNewTweet(newR , tags, user);
+                tweetService.createNewTweet(newR, tags, user);
                 System.out.println("retweet successfully");
             }
         }
-
     }
 
     public static void editTweet(List<Tweet> tweets) {
@@ -407,6 +409,8 @@ public class Main {
             if (tweets.get(i).getId() == tweetId) {
                 tweet = tweets.get(i);
                 break;
+            } else {
+                throw new BusinessException(MassageException.wrongId);
             }
         }
         System.out.println("please choose which one :");
@@ -445,6 +449,8 @@ public class Main {
                     saveListTags(chosenTags, tweetId);
                 }
             }
+        } else {
+            throw new BusinessException(MassageException.wrongNumber);
         }
     }
 
@@ -454,6 +460,5 @@ public class Main {
         }
         System.out.println("your tags successfully");
     }
-
 }
 
