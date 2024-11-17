@@ -60,8 +60,6 @@ public class Main {
         return result;
 
     }
-
-
     public static void signUp() {
         System.out.println("Please enter Your userName :");
         String userName = scanner.nextLine();
