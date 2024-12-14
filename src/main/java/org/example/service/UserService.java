@@ -4,6 +4,7 @@ import org.example.entity.User;
 import org.example.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
+import java.util.Optional;
 
 public class UserService {
     private final UserRepository userRepository = new UserRepository();
@@ -49,13 +50,14 @@ public class UserService {
     }
 
     public User getInformationForOneUser(String email) {
-        User user = userRepository.getInformationForOneUser(email);
-        return user;
+        Optional<User> user = userRepository.getInformationForOneUser(email);
+        return user.orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public User updateInformation(User user) {
-        User newUser = userRepository.update(user);
-        return newUser;
+        Optional<User> newUser = userRepository.update(user);
+        newUser.get();
+        return newUser.orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public List<Tweet> getTweetUser(String email) {

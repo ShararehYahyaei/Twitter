@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class UserRepository {
 
@@ -145,7 +146,7 @@ public class UserRepository {
             """;
 
 
-    public User update(User user) {
+    public Optional<User> update(User user) {
         Connection con = DatabaseConnection.getConnection();
         try {
             PreparedStatement statement = con.prepareStatement(UPDATE_USER);
@@ -156,7 +157,7 @@ public class UserRepository {
             statement.setString(5, user.getEmail());
             statement.execute();
             statement.close();
-            return user;
+            return Optional.of(user);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -170,7 +171,7 @@ public class UserRepository {
             """;
 
 
-    public User getInformationForOneUser(String email) {
+    public Optional<User> getInformationForOneUser(String email) {
         Connection con = DatabaseConnection.getConnection();
         try {
             PreparedStatement statement = con.prepareStatement(SELECT_ALL_INFORMATION_FOR_ONE_USER);
@@ -183,7 +184,7 @@ public class UserRepository {
                 String displayName = rs.getString("DISPLAY_NAME");
                 User user = new User(name, pass, email, bio, displayName);
 
-                return user;
+                return Optional.of(user);
             }
 
         } catch (SQLException e) {

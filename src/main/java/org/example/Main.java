@@ -1,5 +1,4 @@
 package org.example;
-
 import org.example.entity.Tag;
 import org.example.entity.Tweet;
 import org.example.entity.User;
@@ -9,10 +8,10 @@ import org.example.service.JunctionService;
 import org.example.service.TagService;
 import org.example.service.TweetService;
 import org.example.service.UserService;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Semaphore;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -25,6 +24,7 @@ public class Main {
     static User currentUser = null;
 
     public static void main(String[] args) {
+
 
         while (true) {
             try {
@@ -80,7 +80,6 @@ public class Main {
             System.out.println("sign up successful");
         } else {
             throw new BusinessException(MassageException.userExisted);
-
         }
         System.out.println(" 1 - Login ");
         System.out.println(" 2 - Exit ");
